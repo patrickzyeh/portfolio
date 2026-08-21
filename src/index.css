@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Msft";
+    src: url("/public/MS\ Sans\ Serif\ 8pt.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Msft-bold";
+    src: url("/public/MS\ Sans\ Serif\ 8pt\ bold.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@theme {
+    --color-windows95: #008080;
+    --color-windowbar: #c0c0c0;
+    --font-windowtext: "Msft", sans-serif;
+    --font-windowtextbold: "Msft-bold", sans-serif;
+}
