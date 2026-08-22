@@ -23,7 +23,7 @@ function WindowBar() {
             <div id="left-section">
                 <button
                     id="start"
-                    className="flex h-7.5 items-center ml-1 p-1
+                    className="flex h-7.5 items-center ml-1 p-1 cursor-windowselect
          border-t-2 border-l-2 border-t-white border-l-white
          border-r-2 border-b-2 border-b-windowgrey
          active:border-t-windowgrey active:border-l-windowgrey
