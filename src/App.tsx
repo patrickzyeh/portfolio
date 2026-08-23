@@ -7,6 +7,7 @@ import Application from "./components/Application/Application";
 function App() {
     const [selected, setSelected] = useState<string | null>(null);
     // need state to track opened tab, feed this into the window bar as a prop, window bar will map each to a tab component
+    // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
