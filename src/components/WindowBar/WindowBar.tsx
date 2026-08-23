@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Tab from "../Tab/Tab";
 import type WindowBarProps from "./WindowBarProps";
 
-function WindowBar({ tabs }: WindowBarProps) {
+function WindowBar({ tabs, selected, onSelect }: WindowBarProps) {
     const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
@@ -37,7 +37,7 @@ function WindowBar({ tabs }: WindowBarProps) {
                 </button>
 
                 {tabs.map((tab) => (
-                    <Tab icon={tab.icon} name={tab.name} />
+                    <Tab key={tab.name} icon={tab.icon} name={tab.name} selected={selected === tab.name} onSelect={() => onSelect(tab.name)} />
                 ))}
             </div>
 

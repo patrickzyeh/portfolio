@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import type { App } from "./Application/ApplicationProps";
 
-type ResizeDirection = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+import type { ResizeDirection, WindowProps } from "./WindowProps";
 
-function Window({ icon, name }: App) {
+function Window({ icon, name, zIndex, onFocus }: WindowProps) {
     const [position, setPosition] = useState({ x: 750, y: 400 });
     const [size, setSize] = useState({ width: 400, height: 400 });
     const [isDragging, setIsDragging] = useState(false);
@@ -28,6 +27,7 @@ function Window({ icon, name }: App) {
 
     function handlePointerDown(event: React.PointerEvent) {
         event.preventDefault();
+        onFocus();
         setIsDragging(true);
 
         setDragStart({
@@ -41,6 +41,7 @@ function Window({ icon, name }: App) {
     function handleResizePointerDown(event: React.PointerEvent, direction: ResizeDirection) {
         event.preventDefault();
         event.stopPropagation();
+        onFocus();
         setIsResizing(true);
         setResizeDirection(direction);
 
@@ -121,11 +122,14 @@ function Window({ icon, name }: App) {
             ref={windowRef}
             className="absolute bg-windowbar border-t-2 border-l-2 border-t-white border-l-white
          border-r-3 border-b-2 border-b-windowgrey border-r-gray-600"
+            onPointerDown={onFocus}
+            onClick={(event) => event.stopPropagation()}
             style={{
                 left: position.x,
                 top: position.y,
                 width: size.width,
                 height: size.height,
+                zIndex,
             }}
         >
             <div

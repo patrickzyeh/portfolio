@@ -1,16 +1,16 @@
 import { useState } from "react";
 
 import WindowBar from "./components/WindowBar/WindowBar";
-import Window from "./components/Window";
+import Window from "./components/Window/Window";
 import Application from "./components/Application/Application";
 import type { App } from "./components/Application/ApplicationProps";
 
 function App() {
-    const [selected, setSelected] = useState<string | null>(null);
+    const [selected, setSelected] = useState<string | null>("My Computer");
     const [opened, setOpened] = useState<Array<App>>([{ icon: "../public/computer-icon.png", name: "My Computer" }]);
+    const [windowOrder, setWindowOrder] = useState<string[]>(["My Computer"]);
 
     // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
-    // need to make the selected app position on top
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
@@ -21,6 +21,12 @@ function App() {
             return;
         }
         setOpened((prev) => [...prev, app]);
+        focusWindow(app.name);
+    }
+
+    function focusWindow(name: string): void {
+        setSelected(name);
+        setWindowOrder((prev) => [...prev.filter((windowName) => windowName !== name), name]);
     }
 
     return (
@@ -33,7 +39,10 @@ function App() {
                         e.stopPropagation();
                         setSelected("My Computer");
                     }}
-                    onDoubleClick={() => handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer" })}
+                    onDoubleClick={() => {
+                        focusWindow("My Computer");
+                        handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer" });
+                    }}
                     selected={selected == "My Computer"}
                 />
                 <Application
@@ -43,7 +52,10 @@ function App() {
                         e.stopPropagation();
                         setSelected("About Me");
                     }}
-                    onDoubleClick={() => handleAppClick({ icon: "../public/text-icon.png", name: "About Me" })}
+                    onDoubleClick={() => {
+                        focusWindow("About Me");
+                        handleAppClick({ icon: "../public/text-icon.png", name: "About Me" });
+                    }}
                     selected={selected == "About Me"}
                 />
                 <Application
@@ -53,7 +65,10 @@ function App() {
                         e.stopPropagation();
                         setSelected("Projects");
                     }}
-                    onDoubleClick={() => handleAppClick({ icon: "../public/folder-icon.png", name: "Folder" })}
+                    onDoubleClick={() => {
+                        focusWindow("Projects");
+                        handleAppClick({ icon: "../public/folder-icon.png", name: "Projects" });
+                    }}
                     selected={selected == "Projects"}
                 />
 
@@ -89,9 +104,15 @@ function App() {
                 />
             </div>
             {opened.map((window) => (
-                <Window icon={window.icon} name={window.name} />
+                <Window
+                    key={window.name}
+                    icon={window.icon}
+                    name={window.name}
+                    zIndex={windowOrder.indexOf(window.name) + 1}
+                    onFocus={() => focusWindow(window.name)}
+                />
             ))}
-            <WindowBar tabs={opened} />
+            <WindowBar tabs={opened} selected={selected} onSelect={focusWindow} />
         </div>
     );
 }
