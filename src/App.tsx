@@ -10,12 +10,16 @@ function App() {
     const [opened, setOpened] = useState<Array<App>>([{ icon: "../public/computer-icon.png", name: "My Computer" }]);
 
     // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
+    // need to make the selected app position on top
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
     }
 
     function handleAppClick(app: App): void {
+        if (opened.some((openedApp) => openedApp.name === app.name)) {
+            return;
+        }
         setOpened((prev) => [...prev, app]);
     }
 
@@ -84,7 +88,9 @@ function App() {
                     selected={selected == "GitHub"}
                 />
             </div>
-            <Window />
+            {opened.map((window) => (
+                <Window icon={window.icon} name={window.name} />
+            ))}
             <WindowBar tabs={opened} />
         </div>
     );
