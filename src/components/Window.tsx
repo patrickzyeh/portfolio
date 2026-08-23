@@ -68,7 +68,7 @@ function Window() {
         >
             <div
                 id="topbar"
-                className="flex h-8 w-full bg-windowblue cursor-windowselect justify-between items-center font-windowtext"
+                className="flex h-8 w-full bg-windowblue cursor-windowgrab justify-between items-center font-windowtext"
                 onPointerDown={handlePointerDown}
             >
                 <div id="window-name" className="flex ml-1 items-center">
@@ -80,7 +80,10 @@ function Window() {
                     <button
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
-                        border-b border-b-windowgrey border-r-windowgrey"
+                        border-b border-b-windowgrey border-r-windowgrey
+                         active:border-t-windowgrey active:border-l-windowgrey
+                         active:border-r-white active:border-b-white
+                         cursor-windowselect"
                     >
                         <span className="relative -top-1.5">_</span>
                     </button>
@@ -88,7 +91,10 @@ function Window() {
                     <button
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
-                        border-b border-b-windowgrey border-r-windowgrey"
+                        border-b border-b-windowgrey border-r-windowgrey
+                         active:border-t-windowgrey active:border-l-windowgrey
+                         active:border-r-white active:border-b-white
+                         cursor-windowselect"
                     >
                         □
                     </button>
@@ -96,7 +102,10 @@ function Window() {
                     <button
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
-                        border-b border-b-windowgrey border-r-windowgrey"
+                        border-b border-b-windowgrey border-r-windowgrey
+                         active:border-t-windowgrey active:border-l-windowgrey
+                         active:border-r-white active:border-b-white
+                         cursor-windowselect"
                     >
                         x
                     </button>

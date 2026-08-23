@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
-function WindowBar() {
+import Tab from "../Tab/Tab";
+import type WindowBarProps from "./WindowBarProps";
+
+function WindowBar({ tabs }: WindowBarProps) {
     const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
@@ -20,7 +23,7 @@ function WindowBar() {
 
     return (
         <div id="windowbar" className="absolute left-0 bottom-0 bg-windowbar h-10 w-full border-t-3 border-white flex items-center justify-between">
-            <div id="left-section">
+            <div id="left-section" className="flex">
                 <button
                     id="start"
                     className="flex h-7.5 items-center ml-1 p-1 cursor-windowselect
@@ -32,6 +35,10 @@ function WindowBar() {
                     <img src="../public/logo.png" className="h-5 w-5" />
                     <p className="font-windowtextbold ml-1">Start</p>
                 </button>
+
+                {tabs.map((tab) => (
+                    <Tab icon={tab.icon} name={tab.name} />
+                ))}
             </div>
 
             <div

@@ -1,19 +1,23 @@
 import { useState } from "react";
 
-import WindowBar from "./components/WindowBar";
+import WindowBar from "./components/WindowBar/WindowBar";
 import Window from "./components/Window";
 import Application from "./components/Application/Application";
+import type { App } from "./components/Application/ApplicationProps";
 
 function App() {
     const [selected, setSelected] = useState<string | null>(null);
-    // need state to track opened tab, feed this into the window bar as a prop, window bar will map each to a tab component
+    const [opened, setOpened] = useState<Array<App>>([{ icon: "../public/computer-icon.png", name: "My Computer" }]);
+
     // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
     }
 
-    function handleAppClick(): void {}
+    function handleAppClick(app: App): void {
+        setOpened((prev) => [...prev, app]);
+    }
 
     return (
         <div className="min-h-screen w-full bg-windows95 cursor-window" onClick={() => setSelected(null)}>
@@ -25,7 +29,7 @@ function App() {
                         e.stopPropagation();
                         setSelected("My Computer");
                     }}
-                    onDoubleClick={handleAppClick}
+                    onDoubleClick={() => handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer" })}
                     selected={selected == "My Computer"}
                 />
                 <Application
@@ -35,7 +39,7 @@ function App() {
                         e.stopPropagation();
                         setSelected("About Me");
                     }}
-                    onDoubleClick={handleAppClick}
+                    onDoubleClick={() => handleAppClick({ icon: "../public/text-icon.png", name: "About Me" })}
                     selected={selected == "About Me"}
                 />
                 <Application
@@ -45,7 +49,7 @@ function App() {
                         e.stopPropagation();
                         setSelected("Projects");
                     }}
-                    onDoubleClick={handleAppClick}
+                    onDoubleClick={() => handleAppClick({ icon: "../public/folder-icon.png", name: "Folder" })}
                     selected={selected == "Projects"}
                 />
 
@@ -81,7 +85,7 @@ function App() {
                 />
             </div>
             <Window />
-            <WindowBar />
+            <WindowBar tabs={opened} />
         </div>
     );
 }

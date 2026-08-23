@@ -5,6 +5,11 @@ type OverloadedFormat = {
     (url: string): void;
 };
 
+export type App = {
+    icon: string;
+    name: string;
+};
+
 export default interface ApplicationProps {
     icon: string;
     name: string;
