@@ -1,1 +1,1 @@
-Window 95 inspired personal portfolio
+Windows 95 inspired personal portfolio
