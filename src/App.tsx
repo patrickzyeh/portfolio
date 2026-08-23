@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 import WindowBar from "./components/WindowBar";
+import Window from "./components/Window";
 import Application from "./components/Application/Application";
 
 function App() {
     const [selected, setSelected] = useState<string | null>(null);
+    // need state to track opened tab, feed this into the window bar as a prop, window bar will map each to a tab component
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
@@ -77,7 +79,7 @@ function App() {
                     selected={selected == "GitHub"}
                 />
             </div>
-
+            <Window />
             <WindowBar />
         </div>
     );
