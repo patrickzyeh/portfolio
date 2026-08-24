@@ -5,4 +5,5 @@ export type ResizeDirection = "top-left" | "top-right" | "bottom-left" | "bottom
 export type WindowProps = App & {
     zIndex: number;
     onFocus: () => void;
+    onClose: (name: string) => void;
 };

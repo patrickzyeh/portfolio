@@ -9,7 +9,6 @@ function App() {
     const [selected, setSelected] = useState<string | null>("My Computer");
     const [opened, setOpened] = useState<Array<App>>([{ icon: "../public/computer-icon.png", name: "My Computer" }]);
     const [windowOrder, setWindowOrder] = useState<string[]>(["My Computer"]);
-
     // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
 
     function handleUrlClick(url: string): void {
@@ -27,6 +26,10 @@ function App() {
     function focusWindow(name: string): void {
         setSelected(name);
         setWindowOrder((prev) => [...prev.filter((windowName) => windowName !== name), name]);
+    }
+
+    function handleClose(name: string): void {
+        setOpened((prev) => prev.filter((item) => item.name !== name));
     }
 
     return (
@@ -110,6 +113,7 @@ function App() {
                     name={window.name}
                     zIndex={windowOrder.indexOf(window.name) + 1}
                     onFocus={() => focusWindow(window.name)}
+                    onClose={handleClose}
                 />
             ))}
             <WindowBar tabs={opened} selected={selected} onSelect={focusWindow} />
