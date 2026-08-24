@@ -2,11 +2,21 @@ import { useState, useEffect, useRef } from "react";
 
 import type { ResizeDirection, WindowProps } from "./WindowProps";
 
+const DEFAULT_WINDOW_SIZE = { width: 400, height: 400 };
+
+function getCenteredPosition() {
+    return {
+        x: Math.max(0, (window.innerWidth - DEFAULT_WINDOW_SIZE.width) / 2),
+        y: Math.max(0, (window.innerHeight - DEFAULT_WINDOW_SIZE.height) / 2),
+    };
+}
+
 function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProps) {
-    const [position, setPosition] = useState({ x: 750, y: 400 });
-    const [size, setSize] = useState({ width: 400, height: 400 });
+    const [position, setPosition] = useState(getCenteredPosition);
+    const [size, setSize] = useState(DEFAULT_WINDOW_SIZE);
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
+    const [isMaximized, setIsMaximized] = useState(false);
     const [resizeDirection, setResizeDirection] = useState<ResizeDirection | null>(null);
     const [dragStart, setDragStart] = useState({
         mouseX: 0,
@@ -22,11 +32,17 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
         width: 0,
         height: 0,
     });
+    const [restoredBounds, setRestoredBounds] = useState({
+        position: getCenteredPosition(),
+        size: DEFAULT_WINDOW_SIZE,
+    });
 
     const windowRef = useRef<HTMLDivElement>(null);
 
     function handlePointerDown(event: React.PointerEvent) {
         event.preventDefault();
+        if ((event.target as HTMLElement).closest("button")) return;
+        if (isMaximized) return;
         onFocus();
         setIsDragging(true);
 
@@ -41,6 +57,7 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
     function handleResizePointerDown(event: React.PointerEvent, direction: ResizeDirection) {
         event.preventDefault();
         event.stopPropagation();
+        if (isMaximized) return;
         onFocus();
         setIsResizing(true);
         setResizeDirection(direction);
@@ -53,6 +70,19 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
             width: size.width,
             height: size.height,
         });
+    }
+
+    function handleMaximize() {
+        onFocus();
+        if (isMaximized) {
+            setPosition(restoredBounds.position);
+            setSize(restoredBounds.size);
+        } else {
+            setRestoredBounds({ position, size });
+            setPosition({ x: 0, y: 0 });
+            setSize({ width: window.innerWidth, height: Math.max(160, window.innerHeight - 40) });
+        }
+        setIsMaximized((prev) => !prev);
     }
 
     useEffect(() => {
@@ -144,6 +174,7 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
 
                 <div id="window-buttons" className="flex items-center justify-center space-x-1 mr-1">
                     <button
+                        type="button"
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
                         border-b border-b-windowgrey border-r-windowgrey
@@ -156,17 +187,24 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
                     </button>
 
                     <button
+                        type="button"
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
                         border-b border-b-windowgrey border-r-windowgrey
                          active:border-t-windowgrey active:border-l-windowgrey
                          active:border-r-white active:border-b-white
                          cursor-windowselect"
+                        onPointerDown={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleMaximize();
+                        }}
                     >
-                        □
+                        {isMaximized ? "❐" : "□"}
                     </button>
 
                     <button
+                        type="button"
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
                         border-t border-l border-t-white border-l-white border-r 
                         border-b border-b-windowgrey border-r-windowgrey
