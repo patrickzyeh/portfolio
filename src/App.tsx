@@ -5,9 +5,11 @@ import Window from "./components/Window/Window";
 import Application from "./components/Application/Application";
 import type { App } from "./components/Application/ApplicationProps";
 
+type WindowApp = App & { minimized: boolean };
+
 function App() {
     const [selected, setSelected] = useState<string | null>("My Computer");
-    const [opened, setOpened] = useState<Array<App>>([{ icon: "../public/computer-icon.png", name: "My Computer" }]);
+    const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "../public/computer-icon.png", name: "My Computer", minimized: false }]);
     const [windowOrder, setWindowOrder] = useState<string[]>(["My Computer"]);
     // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
 
@@ -15,7 +17,7 @@ function App() {
         window.open(url, "_blank");
     }
 
-    function handleAppClick(app: App): void {
+    function handleAppClick(app: WindowApp): void {
         if (opened.some((openedApp) => openedApp.name === app.name)) {
             return;
         }
@@ -26,10 +28,16 @@ function App() {
     function focusWindow(name: string): void {
         setSelected(name);
         setWindowOrder((prev) => [...prev.filter((windowName) => windowName !== name), name]);
+        setOpened((prev) => prev.map((item) => (item.name === name ? { ...item, minimized: false } : item)));
     }
 
     function handleClose(name: string): void {
         setOpened((prev) => prev.filter((item) => item.name !== name));
+    }
+
+    function handleMinimize(name: string): void {
+        setOpened((prev) => prev.map((item) => (item.name === name ? { ...item, minimized: true } : item)));
+        setSelected(null);
     }
 
     return (
@@ -44,7 +52,7 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("My Computer");
-                        handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer" });
+                        handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer", minimized: false });
                     }}
                     selected={selected == "My Computer"}
                 />
@@ -57,7 +65,7 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("About Me");
-                        handleAppClick({ icon: "../public/text-icon.png", name: "About Me" });
+                        handleAppClick({ icon: "../public/text-icon.png", name: "About Me", minimized: false });
                     }}
                     selected={selected == "About Me"}
                 />
@@ -70,7 +78,7 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("Projects");
-                        handleAppClick({ icon: "../public/folder-icon.png", name: "Projects" });
+                        handleAppClick({ icon: "../public/folder-icon.png", name: "Projects", minimized: false });
                     }}
                     selected={selected == "Projects"}
                 />
@@ -106,16 +114,20 @@ function App() {
                     selected={selected == "GitHub"}
                 />
             </div>
-            {opened.map((window) => (
-                <Window
-                    key={window.name}
-                    icon={window.icon}
-                    name={window.name}
-                    zIndex={windowOrder.indexOf(window.name) + 1}
-                    onFocus={() => focusWindow(window.name)}
-                    onClose={handleClose}
-                />
-            ))}
+            {opened.map(
+                (window) =>
+                    !window.minimized && (
+                        <Window
+                            key={window.name}
+                            icon={window.icon}
+                            name={window.name}
+                            zIndex={windowOrder.indexOf(window.name) + 1}
+                            onFocus={() => focusWindow(window.name)}
+                            onClose={handleClose}
+                            onMinimize={handleMinimize}
+                        />
+                    ),
+            )}
             <WindowBar tabs={opened} selected={selected} onSelect={focusWindow} />
         </div>
     );

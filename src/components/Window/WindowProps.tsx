@@ -6,4 +6,5 @@ export type WindowProps = App & {
     zIndex: number;
     onFocus: () => void;
     onClose: (name: string) => void;
+    onMinimize: (name: string) => void;
 };

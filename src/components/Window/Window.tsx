@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 import type { ResizeDirection, WindowProps } from "./WindowProps";
 
-function Window({ icon, name, zIndex, onFocus, onClose }: WindowProps) {
+function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProps) {
     const [position, setPosition] = useState({ x: 750, y: 400 });
     const [size, setSize] = useState({ width: 400, height: 400 });
     const [isDragging, setIsDragging] = useState(false);
@@ -150,6 +150,7 @@ function Window({ icon, name, zIndex, onFocus, onClose }: WindowProps) {
                          active:border-t-windowgrey active:border-l-windowgrey
                          active:border-r-white active:border-b-white
                          cursor-windowselect"
+                        onClick={() => onMinimize(name)}
                     >
                         <span className="relative -top-1.5">_</span>
                     </button>
