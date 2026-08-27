@@ -11,7 +11,6 @@ function App() {
     const [selected, setSelected] = useState<string | null>("My Computer");
     const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "../public/computer-icon.png", name: "My Computer", minimized: false }]);
     const [windowOrder, setWindowOrder] = useState<string[]>(["My Computer"]);
-    // need to lift the state of minimize, fs, close here -> allows us to sync the tabs and windows and apps
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");

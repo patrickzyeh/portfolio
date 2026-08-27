@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import type { ResizeDirection, WindowProps } from "./WindowProps";
 
 const DEFAULT_WINDOW_SIZE = { width: 400, height: 400 };
+const TASKBAR_HEIGHT = 40;
 
 function getCenteredPosition() {
     return {
@@ -124,7 +125,7 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
             const newY = dragStart.windowY + (event.clientY - dragStart.mouseY);
 
             const maxX = window.innerWidth - rect.width;
-            const maxY = window.innerHeight - rect.height;
+            const maxY = window.innerHeight - TASKBAR_HEIGHT - rect.height;
 
             setPosition({
                 x: Math.max(0, Math.min(newX, maxX)),
