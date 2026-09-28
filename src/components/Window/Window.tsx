@@ -1,20 +1,38 @@
 import { useState, useEffect, useRef } from "react";
 
-import type { ResizeDirection, WindowProps } from "./WindowProps";
+import type { ResizeDirection, WindowProps, WindowSize } from "./WindowProps";
 
-const DEFAULT_WINDOW_SIZE = { width: 400, height: 400 };
+const MIN_WINDOW_SIZE = { width: 240, height: 160 };
 const TASKBAR_HEIGHT = 40;
 
-function getCenteredPosition() {
+function getAvailableWindowSize() {
     return {
-        x: Math.max(0, (window.innerWidth - DEFAULT_WINDOW_SIZE.width) / 2),
-        y: Math.max(0, (window.innerHeight - DEFAULT_WINDOW_SIZE.height) / 2),
+        width: window.innerWidth,
+        height: Math.max(0, window.innerHeight - TASKBAR_HEIGHT),
     };
 }
 
-function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProps) {
-    const [position, setPosition] = useState(getCenteredPosition);
-    const [size, setSize] = useState(DEFAULT_WINDOW_SIZE);
+function getWindowSize(defaultSize: WindowSize) {
+    const availableSize = getAvailableWindowSize();
+
+    return {
+        width: Math.min(defaultSize.width, availableSize.width),
+        height: Math.min(defaultSize.height, availableSize.height),
+    };
+}
+
+function getCenteredPosition(defaultSize: WindowSize) {
+    const windowSize = getWindowSize(defaultSize);
+
+    return {
+        x: Math.max(0, (window.innerWidth - windowSize.width) / 2),
+        y: Math.max(0, (getAvailableWindowSize().height - windowSize.height) / 2),
+    };
+}
+
+function Window({ icon, name, defaultSize, zIndex, onFocus, onClose, onMinimize, children }: WindowProps) {
+    const [position, setPosition] = useState(() => getCenteredPosition(defaultSize));
+    const [size, setSize] = useState(() => getWindowSize(defaultSize));
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
@@ -34,8 +52,8 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
         height: 0,
     });
     const [restoredBounds, setRestoredBounds] = useState({
-        position: getCenteredPosition(),
-        size: DEFAULT_WINDOW_SIZE,
+        position: getCenteredPosition(defaultSize),
+        size: getWindowSize(defaultSize),
     });
 
     const windowRef = useRef<HTMLDivElement>(null);
@@ -81,7 +99,7 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
         } else {
             setRestoredBounds({ position, size });
             setPosition({ x: 0, y: 0 });
-            setSize({ width: window.innerWidth, height: Math.max(160, window.innerHeight - 40) });
+            setSize(getAvailableWindowSize());
         }
         setIsMaximized((prev) => !prev);
     }
@@ -100,10 +118,13 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
                 const deltaY = event.clientY - resizeStart.mouseY;
                 const rightEdge = resizeStart.windowX + resizeStart.width;
                 const bottomEdge = resizeStart.windowY + resizeStart.height;
-                const maxWidth = isLeft ? rightEdge : window.innerWidth - resizeStart.windowX;
-                const maxHeight = isTop ? bottomEdge : window.innerHeight - resizeStart.windowY;
-                const width = Math.max(240, Math.min(resizeStart.width + (isLeft ? -deltaX : deltaX), maxWidth));
-                const height = Math.max(160, Math.min(resizeStart.height + (isTop ? -deltaY : deltaY), maxHeight));
+                const availableSize = getAvailableWindowSize();
+                const maxWidth = isLeft ? rightEdge : availableSize.width - resizeStart.windowX;
+                const maxHeight = isTop ? bottomEdge : availableSize.height - resizeStart.windowY;
+                const minWidth = Math.min(MIN_WINDOW_SIZE.width, maxWidth);
+                const minHeight = Math.min(MIN_WINDOW_SIZE.height, maxHeight);
+                const width = Math.max(minWidth, Math.min(resizeStart.width + (isLeft ? -deltaX : deltaX), maxWidth));
+                const height = Math.max(minHeight, Math.min(resizeStart.height + (isTop ? -deltaY : deltaY), maxHeight));
 
                 setSize({
                     width,
@@ -151,8 +172,9 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
     return (
         <div
             ref={windowRef}
-            className="absolute bg-windowbar border-t-2 border-l-2 border-t-white border-l-white
-         border-r-3 border-b-2 border-b-windowgrey border-r-gray-600"
+            className="absolute flex flex-col bg-windowbar
+            border-t-2 border-l-2 border-t-white border-l-white
+            border-r-3 border-b-3 border-b-gray-700 border-r-gray-800"
             onPointerDown={onFocus}
             onClick={(event) => event.stopPropagation()}
             style={{
@@ -165,15 +187,15 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
         >
             <div
                 id="topbar"
-                className="flex h-8 w-full bg-windowblue cursor-windowgrab justify-between items-center font-windowtext"
+                className="flex h-8 w-full min-w-0 bg-windowblue cursor-windowgrab justify-between items-center font-windowtext"
                 onPointerDown={handlePointerDown}
             >
-                <div id="window-name" className="flex ml-1 items-center">
+                <div id="window-name" className="flex min-w-0 ml-1 items-center">
                     <img src={icon} className="h-5 w-5" />
-                    <p className="text-white ml-1">{name}</p>
+                    <p className="text-white ml-1 truncate">{name}</p>
                 </div>
 
-                <div id="window-buttons" className="flex items-center justify-center space-x-1 mr-1">
+                <div id="window-buttons" className="flex shrink-0 items-center justify-center space-x-1 mr-1">
                     <button
                         type="button"
                         className="flex h-4 w-4 items-center justify-center bg-windowbar 
@@ -218,6 +240,8 @@ function Window({ icon, name, zIndex, onFocus, onClose, onMinimize }: WindowProp
                     </button>
                 </div>
             </div>
+
+            <div className="flex min-h-0 min-w-0 flex-1 m-5 overflow-hidden">{children}</div>
 
             <button
                 type="button"

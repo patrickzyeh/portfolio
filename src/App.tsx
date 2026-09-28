@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import WindowBar from "./components/WindowBar/WindowBar";
 import Window from "./components/Window/Window";
 import Application from "./components/Application/Application";
 import type { App } from "./components/Application/ApplicationProps";
+import MyComputerApplicationWindow from "./components/ApplicationWindow/MyComputerApplicationWindow/MyComputerApplicationWindow";
+import WelcomeApplicationWindow from "./components/ApplicationWindow/WelcomeApplicationWindow/WelcomeApplicationWindow";
+import ProjectApplicationWindow from "./components/ApplicationWindow/ProjectApplicationWindow/ProjectApplicationWindow";
+import type { WindowSize } from "./components/Window/WindowProps";
 
 type WindowApp = App & { minimized: boolean };
+type WindowApplication = {
+    content: ReactNode;
+    size: WindowSize;
+};
+
+const windowApplication: Record<string, WindowApplication> = {
+    "About Me": { content: <MyComputerApplicationWindow />, size: { width: 600, height: 300 } },
+    Welcome: { content: <WelcomeApplicationWindow />, size: { width: 400, height: 400 } },
+    Projects: { content: <ProjectApplicationWindow />, size: { width: 600, height: 600 } },
+};
 
 function App() {
-    const [selected, setSelected] = useState<string | null>("My Computer");
-    const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "../public/computer-icon.png", name: "My Computer", minimized: false }]);
-    const [windowOrder, setWindowOrder] = useState<string[]>(["My Computer"]);
+    const [selected, setSelected] = useState<string | null>("Welcome");
+    const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "../public/text-icon.png", name: "Welcome", minimized: false }]);
+    const [windowOrder, setWindowOrder] = useState<string[]>(["Welcome"]);
 
     function handleUrlClick(url: string): void {
         window.open(url, "_blank");
@@ -44,19 +58,6 @@ function App() {
             <div id="applications" className="flex-col">
                 <Application
                     icon="../public/computer-icon.png"
-                    name="My Computer"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelected("My Computer");
-                    }}
-                    onDoubleClick={() => {
-                        focusWindow("My Computer");
-                        handleAppClick({ icon: "../public/computer-icon.png", name: "My Computer", minimized: false });
-                    }}
-                    selected={selected == "My Computer"}
-                />
-                <Application
-                    icon="../public/text-icon.png"
                     name="About Me"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -64,9 +65,22 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("About Me");
-                        handleAppClick({ icon: "../public/text-icon.png", name: "About Me", minimized: false });
+                        handleAppClick({ icon: "../public/computer-icon.png", name: "About Me", minimized: false });
                     }}
                     selected={selected == "About Me"}
+                />
+                <Application
+                    icon="../public/text-icon.png"
+                    name="Welcome"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelected("Welcome");
+                    }}
+                    onDoubleClick={() => {
+                        focusWindow("Welcome");
+                        handleAppClick({ icon: "../public/text-icon.png", name: "Welcome", minimized: false });
+                    }}
+                    selected={selected == "Welcome"}
                 />
                 <Application
                     icon="../public/folder-icon.png"
@@ -113,20 +127,26 @@ function App() {
                     selected={selected == "GitHub"}
                 />
             </div>
-            {opened.map(
-                (window) =>
-                    !window.minimized && (
-                        <Window
-                            key={window.name}
-                            icon={window.icon}
-                            name={window.name}
-                            zIndex={windowOrder.indexOf(window.name) + 1}
-                            onFocus={() => focusWindow(window.name)}
-                            onClose={handleClose}
-                            onMinimize={handleMinimize}
-                        />
-                    ),
-            )}
+            {opened.map((window) => {
+                if (window.minimized) return null;
+
+                const application = windowApplication[window.name];
+
+                return (
+                    <Window
+                        key={window.name}
+                        icon={window.icon}
+                        name={window.name}
+                        defaultSize={application.size}
+                        zIndex={windowOrder.indexOf(window.name) + 1}
+                        onFocus={() => focusWindow(window.name)}
+                        onClose={handleClose}
+                        onMinimize={handleMinimize}
+                    >
+                        {application.content}
+                    </Window>
+                );
+            })}
             <WindowBar tabs={opened} selected={selected} onSelect={focusWindow} />
         </div>
     );
