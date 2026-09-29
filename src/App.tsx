@@ -6,7 +6,9 @@ import Application from "./components/Application/Application";
 import type { App } from "./components/Application/ApplicationProps";
 import MyComputerApplicationWindow from "./components/ApplicationWindow/MyComputerApplicationWindow/MyComputerApplicationWindow";
 import WelcomeApplicationWindow from "./components/ApplicationWindow/WelcomeApplicationWindow/WelcomeApplicationWindow";
-import ProjectApplicationWindow from "./components/ApplicationWindow/ProjectApplicationWindow/ProjectApplicationWindow";
+import ProjectApplicationWindow, { type Project } from "./components/ApplicationWindow/ProjectApplicationWindow/ProjectApplicationWindow";
+import ProjectDetailsApplicationWindow from "./components/ApplicationWindow/ProjectDetailsApplicationWindow/ProjectDetailsApplicationWindow";
+import projects from "./components/ApplicationWindow/ProjectApplicationWindow/contents.json";
 import type { WindowSize } from "./components/Window/WindowProps";
 
 type WindowApp = App & { minimized: boolean };
@@ -15,10 +17,10 @@ type WindowApplication = {
     size: WindowSize;
 };
 
-const windowApplication: Record<string, WindowApplication> = {
+const baseWindowApplication: Record<string, WindowApplication> = {
     "About Me": { content: <MyComputerApplicationWindow />, size: { width: 600, height: 300 } },
     Welcome: { content: <WelcomeApplicationWindow />, size: { width: 400, height: 400 } },
-    Projects: { content: <ProjectApplicationWindow />, size: { width: 600, height: 600 } },
+    Projects: { content: null, size: { width: 600, height: 600 } },
 };
 
 function App() {
@@ -51,6 +53,10 @@ function App() {
     function handleMinimize(name: string): void {
         setOpened((prev) => prev.map((item) => (item.name === name ? { ...item, minimized: true } : item)));
         setSelected(null);
+    }
+
+    function handleProjectOpen(project: Project): void {
+        handleAppClick({ icon: "../public/folder-icon.png", name: project.Name, minimized: false });
     }
 
     return (
@@ -130,7 +136,17 @@ function App() {
             {opened.map((window) => {
                 if (window.minimized) return null;
 
-                const application = windowApplication[window.name];
+                const application =
+                    window.name === "Projects"
+                        ? { ...baseWindowApplication.Projects, content: <ProjectApplicationWindow onOpenProject={handleProjectOpen} /> }
+                        : (baseWindowApplication[window.name] ?? {
+                              content: (
+                                  <ProjectDetailsApplicationWindow
+                                      project={projects.find((project) => project.Name === window.name) ?? projects[0]}
+                                  />
+                              ),
+                              size: { width: 600, height: 500 },
+                          });
 
                 return (
                     <Window
