@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import WindowBar from "./components/WindowBar/WindowBar";
 import Window from "./components/Window/Window";
 import Application from "./components/Application/Application";
-import type { App } from "./components/Application/ApplicationProps";
+import type { App as AppProps } from "./components/Application/ApplicationProps";
 import MyComputerApplicationWindow from "./components/ApplicationWindow/MyComputerApplicationWindow/MyComputerApplicationWindow";
 import WelcomeApplicationWindow from "./components/ApplicationWindow/WelcomeApplicationWindow/WelcomeApplicationWindow";
 import ProjectApplicationWindow, { type Project } from "./components/ApplicationWindow/ProjectApplicationWindow/ProjectApplicationWindow";
@@ -11,7 +11,7 @@ import ProjectDetailsApplicationWindow from "./components/ApplicationWindow/Proj
 import projects from "./components/ApplicationWindow/ProjectApplicationWindow/contents.json";
 import type { WindowSize } from "./components/Window/WindowProps";
 
-type WindowApp = App & { minimized: boolean };
+type WindowApp = AppProps & { minimized: boolean };
 type WindowApplication = {
     content: ReactNode;
     size: WindowSize;

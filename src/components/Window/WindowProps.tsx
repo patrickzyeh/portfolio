@@ -1,4 +1,4 @@
-import type App from "../../App";
+import type { App } from "../Application/ApplicationProps";
 
 export type ResizeDirection = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
