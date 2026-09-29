@@ -17,7 +17,7 @@ function ProjectDetailsApplicationWindow({ project }: ProjectDetailsApplicationW
                 .map(([label, value]) => (
                     <div key={label} className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-x-3 border-b border-windowgrey/50 py-2">
                         <p className="font-windowtextbold text-sm uppercase">{label}</p>
-                        {label === "Source" || label === "Project Link" ? (
+                        {label === "Source Code" || label === "Source" || label === "Project Link" ? (
                             <a href={value} target="_blank" rel="noreferrer" className="min-w-0 wrap-break-word text-sm text-windowblue underline">
                                 {value}
                             </a>
