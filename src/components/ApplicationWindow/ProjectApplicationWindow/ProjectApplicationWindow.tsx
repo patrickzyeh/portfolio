@@ -27,7 +27,7 @@ function ProjectApplicationWindow({ onOpenProject }: ProjectApplicationWindowPro
                         onDoubleClick={() => onOpenProject(project)}
                     >
                         <div className="flex w-22 flex-col items-center">
-                            <img src="../public/folder-icon.png" className="h-22 w-22 shrink-0" />
+                            <img src="/folder-icon.png" className="h-22 w-22 shrink-0" />
                             <p
                                 className={`w-22 wrap-break-word font-windowtext text-sm font-light text-center leading-tight ${isSelected ? "border-2 border-dotted text-white" : ""}`}
                             >

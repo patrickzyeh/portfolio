@@ -25,7 +25,7 @@ const baseWindowApplication: Record<string, WindowApplication> = {
 
 function App() {
     const [selected, setSelected] = useState<string | null>("Welcome");
-    const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "../public/text-icon.png", name: "Welcome", minimized: false }]);
+    const [opened, setOpened] = useState<Array<WindowApp>>([{ icon: "/text-icon.png", name: "Welcome", minimized: false }]);
     const [windowOrder, setWindowOrder] = useState<string[]>(["Welcome"]);
 
     function handleUrlClick(url: string): void {
@@ -56,14 +56,14 @@ function App() {
     }
 
     function handleProjectOpen(project: Project): void {
-        handleAppClick({ icon: "../public/folder-icon.png", name: project.Name, minimized: false });
+        handleAppClick({ icon: "/folder-icon.png", name: project.Name, minimized: false });
     }
 
     return (
         <div className="min-h-screen w-full bg-windows95 cursor-window" onClick={() => setSelected(null)}>
             <div id="applications" className="flex-col">
                 <Application
-                    icon="../public/computer-icon.png"
+                    icon="/computer-icon.png"
                     name="About Me"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -71,12 +71,12 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("About Me");
-                        handleAppClick({ icon: "../public/computer-icon.png", name: "About Me", minimized: false });
+                        handleAppClick({ icon: "/computer-icon.png", name: "About Me", minimized: false });
                     }}
                     selected={selected == "About Me"}
                 />
                 <Application
-                    icon="../public/text-icon.png"
+                    icon="/text-icon.png"
                     name="Welcome"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -84,12 +84,12 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("Welcome");
-                        handleAppClick({ icon: "../public/text-icon.png", name: "Welcome", minimized: false });
+                        handleAppClick({ icon: "/text-icon.png", name: "Welcome", minimized: false });
                     }}
                     selected={selected == "Welcome"}
                 />
                 <Application
-                    icon="../public/folder-icon.png"
+                    icon="/folder-icon.png"
                     name="Projects"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -97,23 +97,23 @@ function App() {
                     }}
                     onDoubleClick={() => {
                         focusWindow("Projects");
-                        handleAppClick({ icon: "../public/folder-icon.png", name: "Projects", minimized: false });
+                        handleAppClick({ icon: "/folder-icon.png", name: "Projects", minimized: false });
                     }}
                     selected={selected == "Projects"}
                 />
 
                 <Application
-                    icon="../public/text-icon.png"
+                    icon="/text-icon.png"
                     name="Resume"
                     onClick={(e) => {
                         e.stopPropagation();
                         setSelected("Resume");
                     }}
-                    onDoubleClick={() => handleUrlClick("../public/Resume.pdf")}
+                    onDoubleClick={() => handleUrlClick("/Resume.pdf")}
                     selected={selected == "Resume"}
                 />
                 <Application
-                    icon="../public/linkedin-logo.png"
+                    icon="/linkedin-logo.png"
                     name="LinkedIn"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -123,7 +123,7 @@ function App() {
                     selected={selected == "LinkedIn"}
                 />
                 <Application
-                    icon="../public/github-logo.png"
+                    icon="/github-logo.png"
                     name="GitHub"
                     onClick={(e) => {
                         e.stopPropagation();

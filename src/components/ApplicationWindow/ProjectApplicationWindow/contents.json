@@ -1,7 +1,7 @@
 [
     {
         "Name": "Mac Course Ratings",
-        "image": "../../../../public/MacCourseRatings.png",
+        "image": "/MacCourseRatings.png",
         "Source Code": "https://github.com/patrickzyeh/MacCourseRating",
         "Project Link": "https://maccourseratings.vercel.app/",
         "Description": "A full-stack CRUD app to allow McMaster students to rate their courses.",
@@ -9,7 +9,7 @@
     },
     {
         "Name": "Traint",
-        "image": "../../../../public/Traint.png",
+        "image": "/Traint.png",
         "Source Code": "https://github.com/EthanL818/hackthenorth2024",
         "Project Link": "https://devpost.com/software/traint",
         "Description": "×2 Hack the North Winner. An AI-powered customer support training tool.",

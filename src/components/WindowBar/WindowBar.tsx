@@ -32,7 +32,7 @@ function WindowBar({ tabs, selected, onSelect }: WindowBarProps) {
          active:border-t-windowgrey active:border-l-windowgrey
          active:border-r-white active:border-b-white"
                 >
-                    <img src="../public/logo.png" className="h-5 w-5" />
+                    <img src="/logo.png" className="h-5 w-5" />
                     <p className="font-windowtextbold ml-1">Start</p>
                 </button>
 
